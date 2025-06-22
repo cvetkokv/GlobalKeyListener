@@ -1,0 +1,16 @@
+go to global-key-listener folder make sure you dont enter src nor native folders then run command
+
+javac -h native src/main/java/com/example/globalkey/NativeKeyboardHook.java
+
+then run x64 Native Tools Command Prompt for VS 2022 and then run command 
+
+cd C:\Users\cvetk\Downloads\global-key-listener\native 
+
+and then run command
+
+mkdir build
+cd build
+cmake ..
+cmake --build .
+
+and then inside native/build/Debug folder you should see .dll
