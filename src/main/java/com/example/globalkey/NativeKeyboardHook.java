@@ -5,6 +5,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * NativeKeyboardHook is a utility class that loads a native library for keyboard hooking
+ * and provides methods to start the hook and retrieve dropped events.
+ * It supports both Windows and Linux platforms.
+ */
 public class NativeKeyboardHook {
     static {
         try {
@@ -46,6 +51,10 @@ public class NativeKeyboardHook {
     private NativeKeyboardHook() {
     }
 
+    /**
+     * Starts the keyboard hook in a separate thread if it hasn't been started yet.
+     * This method ensures that the hook is only started once, even if called multiple times.
+     */
     public static void startHookOnce() {
         if (!hookStarted) {
             hookStarted = true;
@@ -53,6 +62,12 @@ public class NativeKeyboardHook {
         }
     }
 
+    /**
+     * Retrieves the number of dropped events since the last call.
+     * This method is thread-safe and can be called at any time.
+     *
+     * @return the number of dropped events
+     */
     public static int getDroppedEvents() {
         return instance.getDroppedEventsNative();
     }

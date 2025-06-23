@@ -39,13 +39,14 @@ void captureKeys() {
             XEvent ev;
             XNextEvent(display, &ev);
             if (ev.type == KeyPress || ev.type == KeyRelease) {
+                KeySym keysym = XLookupKeysym(&ev.xkey, 0);
                 KeyEventData data;
-                data.keycode = ev.xkey.keycode;
+                data.keycode = static_cast<int>(keysym);  // symbolic key value (like VK code)
                 data.eventType = (ev.type == KeyRelease) ? 1 : 0;
                 if (!eventQueue.push(data)) {
                     droppedEvents++;
                 }
-            }
+}
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }

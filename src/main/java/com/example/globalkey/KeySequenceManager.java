@@ -8,9 +8,15 @@ import javafx.scene.input.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * KeySequenceManager handles key sequences, allowing for custom match rules,
+ * completion actions, and validation. It supports both character input and
+ * numeric keypad input, with a configurable timeout for sequence completion.
+ */
 public class KeySequenceManager {
 
     public static final Map<KeyCode, String> KEY_TO_CHAR_MAP = Map.<KeyCode, String>ofEntries(
@@ -44,7 +50,8 @@ public class KeySequenceManager {
             Map.entry(KeyCode.OPEN_BRACKET, "["), Map.entry(KeyCode.CLOSE_BRACKET, "]"),
 
             Map.entry(KeyCode.MULTIPLY, "*"), Map.entry(KeyCode.DIVIDE, "/"),
-            Map.entry(KeyCode.ADD, "+"), Map.entry(KeyCode.SUBTRACT, "-"),
+            Map.entry(KeyCode.ADD, "+"), Map.entry(KeyCode.PLUS, "+"),
+            Map.entry(KeyCode.SUBTRACT, "-"),
             Map.entry(KeyCode.DECIMAL, ".")
     );
 
@@ -59,6 +66,7 @@ public class KeySequenceManager {
 
     private long lastKeyTime = 0;
     private long timeoutMillis = 250;
+    private final AtomicBoolean shiftDown = new AtomicBoolean(false);
 
     public static KeySequenceManager getInstance() {
         return INSTANCE;
@@ -114,12 +122,20 @@ public class KeySequenceManager {
             return;
         }
 
+        if (evt.getCode() == KeyCode.SHIFT) {
+            shiftDown.set(true);
+        }
+
         boolean matched = false;
         for (Predicate<KeyEvent> rule : matchRules) {
             if (rule.test(evt)) {
                 String charPart = KEY_TO_CHAR_MAP.get(evt.getCode());
                 if (charPart != null) {
-                    buffer.append(charPart);
+                    if (shiftDown.getAndSet(false) && charPart.length() == 1 && Character.isLetter(charPart.charAt(0))) {
+                        buffer.append(charPart.toUpperCase());
+                    } else {
+                        buffer.append(charPart);
+                    }
                 }
                 matched = true;
                 break;
