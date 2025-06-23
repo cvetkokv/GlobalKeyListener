@@ -213,7 +213,26 @@ public class NativeKeyboardBridge {
             default -> KEY_TYPED;
         };
 
-        String text = fxType == KEY_TYPED ? keyCode.getChar() : "";
+        String text = switch (keyCode) {
+            case NUMPAD0 -> "0";
+            case NUMPAD1 -> "1";
+            case NUMPAD2 -> "2";
+            case NUMPAD3 -> "3";
+            case NUMPAD4 -> "4";
+            case NUMPAD5 -> "5";
+            case NUMPAD6 -> "6";
+            case NUMPAD7 -> "7";
+            case NUMPAD8 -> "8";
+            case NUMPAD9 -> "9";
+            case DECIMAL -> ".";
+            case ADD -> "+";
+            case SUBTRACT -> "-";
+            case MULTIPLY -> "*";
+            case DIVIDE -> "/";
+            default -> (keyCode.isLetterKey() || keyCode.isDigitKey() || isPrintable(keyCode))
+                    ? keyCode.getChar()
+                    : "";
+        };
 
         KeyEvent fxEvent = new KeyEvent(
                 fxType,
@@ -374,6 +393,15 @@ public class NativeKeyboardBridge {
         VK_MAP.put(0xFFE5, KeyCode.CAPS);
         VK_MAP.put(0xFF7F, KeyCode.NUM_LOCK);
         VK_MAP.put(0xFF14, KeyCode.SCROLL_LOCK);
+    }
+
+    private static boolean isPrintable(KeyCode code) {
+        return switch (code) {
+            case SPACE, COMMA, PERIOD, SLASH, BACK_SLASH, SEMICOLON, QUOTE,
+                 OPEN_BRACKET, CLOSE_BRACKET, MINUS, EQUALS,
+                 BACK_QUOTE, ADD, SUBTRACT, MULTIPLY, DIVIDE, DECIMAL -> true;
+            default -> false;
+        };
     }
 
     static {
