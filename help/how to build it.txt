@@ -10,7 +10,21 @@ and then run command
 
 mkdir build
 cd build
-cmake ..
+
+WIN BUILD:
+cmake .. -G "Visual Studio 17 2022"
+cmake --build . --config Release
+
+LINUX BUILD:
+
+OPEN WSL TERMINAL FIRST
+sudo apt update
+sudo apt install build-essential cmake libx11-dev libboost-all-dev openjdk-21-jdk
+
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64  # Adjust if needed
+
+mkdir -p build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 
 and then inside native/build/Debug folder you should see .dll

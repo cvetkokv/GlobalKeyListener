@@ -203,7 +203,7 @@ public class NativeKeyboardBridge {
     public static void dispatchFromNative(int vkCode, int eventType, boolean shift, boolean ctrl, boolean alt) {
         KeyCode keyCode = VK_MAP.get(vkCode);
         if (keyCode == null) {
-            System.out.println("❌ Unmapped VK code: " + vkCode);
+            System.out.println("Unmapped VK code: " + vkCode);
             return;
         }
 
@@ -413,7 +413,7 @@ public class NativeKeyboardBridge {
             System.out.println("Initializing VK_MAP for Linux");
             initLinuxVKMap();
         } else {
-            System.err.println("❌ Unsupported OS for VK_MAP: " + os);
+            System.err.println("Unsupported OS for VK_MAP: " + os);
         }
     }
 }
