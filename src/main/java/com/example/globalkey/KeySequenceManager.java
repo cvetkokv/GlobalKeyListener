@@ -55,6 +55,32 @@ public class KeySequenceManager {
             Map.entry(KeyCode.DECIMAL, ".")
     );
 
+    private static final Map<KeyCode, String> SHIFTED_CHAR_MAP = Map.ofEntries(
+            Map.entry(KeyCode.DIGIT1, "!"),
+            Map.entry(KeyCode.DIGIT2, "@"),
+            Map.entry(KeyCode.DIGIT3, "#"),
+            Map.entry(KeyCode.DIGIT4, "$"),
+            Map.entry(KeyCode.DIGIT5, "%"),
+            Map.entry(KeyCode.DIGIT6, "^"),
+            Map.entry(KeyCode.DIGIT7, "&"),
+            Map.entry(KeyCode.DIGIT8, "*"),
+            Map.entry(KeyCode.DIGIT9, "("),
+            Map.entry(KeyCode.DIGIT0, ")"),
+            Map.entry(KeyCode.MINUS, "_"),
+            Map.entry(KeyCode.EQUALS, "+"),
+            Map.entry(KeyCode.BRACELEFT, "{"),
+            Map.entry(KeyCode.BRACERIGHT, "}"),
+            Map.entry(KeyCode.OPEN_BRACKET, "{"),
+            Map.entry(KeyCode.CLOSE_BRACKET, "}"),
+            Map.entry(KeyCode.SEMICOLON, ":"),
+            Map.entry(KeyCode.QUOTE, "\""),
+            Map.entry(KeyCode.COMMA, "<"),
+            Map.entry(KeyCode.PERIOD, ">"),
+            Map.entry(KeyCode.SLASH, "?"),
+            Map.entry(KeyCode.BACK_SLASH, "|"),
+            Map.entry(KeyCode.BACK_QUOTE, "~")
+    );
+
     private static final KeySequenceManager INSTANCE = new KeySequenceManager();
 
     private List<Predicate<KeyEvent>> matchRules = new ArrayList<>();
@@ -131,8 +157,13 @@ public class KeySequenceManager {
             if (rule.test(evt)) {
                 String charPart = KEY_TO_CHAR_MAP.get(evt.getCode());
                 if (charPart != null) {
-                    if (shiftDown.getAndSet(false) && charPart.length() == 1 && Character.isLetter(charPart.charAt(0))) {
-                        buffer.append(charPart.toUpperCase());
+                    if (shiftDown.getAndSet(false)) {
+                        if (charPart.length() == 1 && Character.isLetter(charPart.charAt(0))) {
+                            buffer.append(charPart.toUpperCase());
+                        } else {
+                            String shiftedChar = SHIFTED_CHAR_MAP.get(evt.getCode());
+                            buffer.append(shiftedChar != null ? shiftedChar : charPart);
+                        }
                     } else {
                         buffer.append(charPart);
                     }
